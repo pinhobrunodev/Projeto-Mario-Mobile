@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.util.concurrent.ExecutionException;
 
 import br.com.ucsal.pinhobrunodev.tarefamobile.R;
@@ -32,8 +33,16 @@ public class MainActivity extends AppCompatActivity {
 
         button.setOnClickListener(view -> {
             String usernameInput = username.getText().toString();
+            if(usernameInput.isEmpty()){
+                Toast.makeText(MainActivity.this, "O Texto está vazio", Toast.LENGTH_SHORT).show();
+                return;
+            }
             try {
                 Usuario usuario = new GitHubWebService(usernameInput).execute().get();
+                if(usuario == null){
+                    Toast.makeText(MainActivity.this, "Username : "+usernameInput+", não existe.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 db.usuarioRepository().insert(usuario);
                 Intent intent = new Intent(MainActivity.this, MainActivity2.class);
                 startActivity(intent);
